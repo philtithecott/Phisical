@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>PHISICAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: #000; color: #fff; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  .app { max-width: 430px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  .hdr { padding: 20px 20px 14px; border-bottom: 1px solid #1a1a1a; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #000; z-index: 50; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 3px; }
+  .logo span { color: #F7931A; }
+  .hdr-btns { display: flex; gap: 10px; }
+
+  .btn-o { background: #F7931A; color: #000; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .btn-g { background: #111; color: #808080; border: 1px solid #222; border-radius: 8px; padding: 9px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  .scroll { flex: 1; padding: 20px; padding-bottom: 110px; overflow-y: auto; }
+  .card { background: #0d0d0d; border: 1px solid #222; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+
+  .olabel { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2.5px; color: #F7931A; text-transform: uppercase; margin-bottom: 14px; display: block; }
+  .flabel { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; color: #555; text-transform: uppercase; margin-bottom: 8px; display: block; }
+
+  .ex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .ex-btn { background: #111; border: 1.5px solid #222; border-radius: 10px; padding: 12px 8px; color: #555; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; line-height: 1.2; transition: all 0.12s; }
+  .ex-btn.sel { border-color: #F7931A; color: #F7931A; background: rgba(247,147,26,0.08); }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .tinput { width: 100%; background: #111; border: 1.5px solid #222; border-radius: 10px; padding: 12px 14px; color: #fff; font-family: 'DM Mono', monospace; font-size: 18px; outline: none; -webkit-appearance: none; }
+  .tinput:focus { border-color: #F7931A; }
+  input[type=date] { font-size: 14px; color-scheme: dark; }
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .reps-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .reps-row .tinput { width: 80px; text-align: center; font-size: 22px; }
+
+  .sets-ctrl { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .sets-count { font-family: 'DM Mono', monospace; font-size: 13px; color: #666; min-width: 50px; }
+  .pm { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #2a2a2a; background: #111; color: #888; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+
+  .circles { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .circle { width: 56px; height: 56px; border-radius: 50%; border: 2px solid #222; background: #111; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #3a3a3a; cursor: pointer; position: relative; user-select: none; flex-shrink: 0; transition: all 0.12s; }
+  .circle.full    { border-color: #F7931A; background: rgba(247,147,26,0.12); color: #F7931A; }
+  .circle.partial { border-color: #c8102e; background: rgba(200,16,46,0.10); color: #c8102e; }
+  .ctgt { position: absolute; top: 5px; right: 7px; font-size: 9px; font-family: 'DM Mono', monospace; color: #3a3a3a; }
+  .circle.full .ctgt, .circle.partial .ctgt { color: inherit; opacity: 0.5; }
+
+  .partial-row { display: flex; align-items: center; gap: 12px; background: #111; border: 1px solid rgba(200,16,46,0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; }
+  .partial-row label { font-family: 'DM Mono', monospace; font-size: 10px; color: #c8102e; flex: 1; letter-spacing: 1px; text-transform: uppercase; }
+  .partial-row .tinput { width: 70px; text-align: center; font-size: 20px; border-color: rgba(200,16,46,0.4); color: #c8102e; padding: 8px; }
+
+  #logbtn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; background: #F7931A; color: #000; margin-top: 4px; }
+  #logbtn.off { background: #1e1e1e; color: #444; }
+
+  /* history */
+  .ex-row { display: flex; align-items: center; background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 12px; padding: 16px; margin-bottom: 10px; cursor: pointer; gap: 10px; }
+  .ex-row-info { flex: 1; }
+  .ex-row-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; line-height: 1; margin-bottom: 3px; }
+  .ex-row-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: #555; }
+  .ex-row-best { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: #F7931A; letter-spacing: 1px; white-space: nowrap; }
+  .chev { color: #333; font-size: 20px; }
+
+  /* detail */
+  .detail-hdr { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .backbtn { background: #111; border: 1px solid #222; color: #888; border-radius: 8px; padding: 8px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .ex-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; }
+
+  .banner { background: #0d0d0d; border: 1px solid rgba(247,147,26,0.2); border-radius: 12px; padding: 16px 18px; margin-bottom: 18px; display: flex; gap: 20px; align-items: center; }
+  .banner-big { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: #F7931A; letter-spacing: 2px; line-height: 1; }
+  .banner-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .bdiv { border-left: 1px solid #1e1e1e; padding-left: 20px; }
+  .bdiv-n { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #fff; line-height: 1; }
+
+  .srow { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 12px; padding: 14px; margin-bottom: 10px; position: relative; }
+  .srow-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .srow-date { font-family: 'DM Mono', monospace; font-size: 12px; color: #808080; }
+  .srow-wt { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: #F7931A; letter-spacing: 1px; }
+  .srow-circles { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 7px; }
+  .sc { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 17px; flex-shrink: 0; }
+  .sc.full    { border: 2px solid #F7931A; background: rgba(247,147,26,0.12); color: #F7931A; }
+  .sc.partial { border: 2px solid #c8102e; background: rgba(200,16,46,0.10); color: #c8102e; }
+  .sc.empty   { border: 2px solid #222; background: #111; color: #333; }
+  .srow-sum { font-family: 'DM Mono', monospace; font-size: 10px; color: #444; }
+  .delbtn { position: absolute; bottom: 10px; right: 10px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; color: #555; font-size: 13px; cursor: pointer; padding: 4px 8px; font-family: "DM Sans", sans-serif; font-weight: 600; line-height: 1; transition: all 0.12s; }
+  .delbtn:active { background: #c8102e; border-color: #c8102e; color: #fff; }
+
+  .empty { text-align: center; padding: 60px 20px; color: #333; }
+  .empty-icon { font-size: 44px; margin-bottom: 12px; }
+  .empty-txt { font-size: 14px; line-height: 1.6; }
+
+  .hidden { display: none !important; }
+
+  /* ── STOPWATCH ── */
+  .sw-wrap {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    width: calc(min(430px, 100vw) - 40px); z-index: 200;
+  }
+  .sw {
+    background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 16px;
+    padding: 14px 18px; display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+  }
+  .sw-left { flex: 1; }
+  .sw-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; color: #444; text-transform: uppercase; margin-bottom: 2px; }
+  .sw-time { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 3px; color: #fff; line-height: 1; transition: color 0.2s; }
+  .sw-time.running { color: #F7931A; }
+  .sw-btns { display: flex; gap: 8px; }
+  .sw-btn { width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .sw-go    { background: #F7931A; color: #000; }
+  .sw-go:active { background: #d4780f; }
+  .sw-pause { background: #c8102e; color: #fff; }
+  .sw-pause:active { background: #a00d25; }
+  .sw-reset { background: #1a1a1a; color: #555; border: 1px solid #2a2a2a !important; }
+  .sw-reset:active { color: #888; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hdr">
+    <div class="logo">PH<span>I</span>SICAL</div>
+    <div class="hdr-btns" id="hdrBtns"></div>
+  </div>
+
+  <div class="scroll" id="scroll"></div>
+
+</div>
+
+<div class="sw-wrap">
+  <div class="sw">
+    <div class="sw-left">
+      <div class="sw-label">Rest Timer</div>
+      <div class="sw-time" id="swTime">0:00.0</div>
+    </div>
+    <div class="sw-btns">
+      <button class="sw-btn sw-go"    id="swGo"    title="Start / Resume">&#9654;</button>
+      <button class="sw-btn sw-pause" id="swPause" title="Pause" style="display:none">&#10074;&#10074;</button>
+      <button class="sw-btn sw-reset" id="swReset" title="Reset">&#10227;</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────
+const EXERCISES = ["Squat","Deadlift","Bench Press","Overhead Press","Barbell Row","Pull-Up","Dip","Lunge"];
+
+let logs     = [];
+let view     = "log";    // "log" | "history" | "detail"
+let selEx    = null;
+
+// form state
+let fExercise  = null;
+let fWeight    = "";
+let fDate      = new Date().toISOString().slice(0,10);
+let fNumSets   = 5;
+let fRepTarget = 5;
+let fResults   = [null,null,null,null,null];
+let fPartialN  = "";
+
+// ── STORAGE ──────────────────────────────────────────────────────
+function persist() {
+  try { localStorage.setItem("phisical_v1", JSON.stringify(logs)); } catch(e) {}
+}
+function restore() {
+  try {
+    const d = localStorage.getItem("phisical_v1");
+    if (d) logs = JSON.parse(d);
+  } catch(e) {}
+}
+restore();
+
+// ── HELPERS ──────────────────────────────────────────────────────
+function fmtDate(d) {
+  const today = new Date().toISOString().slice(0,10);
+  const yest  = new Date(Date.now()-86400000).toISOString().slice(0,10);
+  if (d === today) return "Today";
+  if (d === yest)  return "Yesterday";
+  return new Date(d+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+}
+
+function sessionsFor(ex) {
+  return logs.filter(e => e.exercise === ex).sort((a,b) => b.date.localeCompare(a.date));
+}
+
+function bestWeight(ex) {
+  const s = sessionsFor(ex);
+  return s.length ? Math.max(...s.map(e => e.weight)) : 0;
+}
+
+function summary(entry) {
+  const f = entry.results.filter(r=>r==="full").length;
+  const p = entry.results.filter(r=>r==="partial").length;
+  const parts = [];
+  if (f > 0) parts.push(f+" × "+entry.repTarget+" reps");
+  if (p > 0) parts.push("1 × "+(entry.partialN ?? "?")+" reps");
+  return parts.join(" · ") || "—";
+}
+
+// ── SET CIRCLE LOGIC ─────────────────────────────────────────────
+function tapCircle(i) {
+  if (fResults[i] === null)        fResults[i] = "full";
+  else if (fResults[i] === "full") fResults[i] = "partial";
+  else                             fResults[i] = null;
+  renderCircles();
+  updateLogBtn();
+}
+
+function changeNumSets(delta) {
+  const next = Math.max(1, Math.min(10, fNumSets + delta));
+  fNumSets = next;
+  while (fResults.length < next) fResults.push(null);
+  fResults = fResults.slice(0, next);
+  renderCircles();
+  document.getElementById("setsCount").textContent = next + " sets";
+  updateLogBtn();
+}
+
+function renderCircles() {
+  const wrap = document.getElementById("circlesWrap");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  fResults.forEach((r, i) => {
+    const div = document.createElement("div");
+    div.className = "circle" + (r==="full" ? " full" : r==="partial" ? " partial" : "");
+    const tgt = document.createElement("span");
+    tgt.className = "ctgt";
+    tgt.textContent = fRepTarget;
+    div.appendChild(tgt);
+    div.appendChild(document.createTextNode(r==="full" ? "✓" : r==="partial" ? "?" : String(i+1)));
+    div.onclick = () => tapCircle(i);
+    wrap.appendChild(div);
+  });
+
+  // show/hide partial input
+  const hasPartial = fResults.some(r=>r==="partial");
+  const pr = document.getElementById("partialRow");
+  if (pr) pr.style.display = hasPartial ? "flex" : "none";
+}
+
+function updateLogBtn() {
+  const btn = document.getElementById("logbtn");
+  if (!btn) return;
+  const ready = fExercise && fWeight && fResults.some(r=>r!==null);
+  btn.className = ready ? "" : "off";
+}
+
+// ── LOG ACTION ───────────────────────────────────────────────────
+function doLog() {
+  if (!fExercise || !fWeight || !fResults.some(r=>r!==null)) return;
+  const hasPartial = fResults.some(r=>r==="partial");
+  const entry = {
+    id: Date.now(),
+    exercise: fExercise,
+    weight: parseFloat(fWeight),
+    date: fDate || new Date().toISOString().slice(0,10),
+    repTarget: parseInt(fRepTarget) || 5,
+    results: [...fResults],
+    partialN: hasPartial ? (parseInt(fPartialN) || 0) : null,
+  };
+  logs.unshift(entry);
+  persist();
+  fResults = fResults.map(()=>null);
+  fPartialN = "";
+  goView("history");
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────────
+function goView(v, ex) {
+  view = v;
+  if (ex !== undefined) selEx = ex;
+  render();
+}
+
+// ── RENDER ───────────────────────────────────────────────────────
+function render() {
+  renderHeader();
+  const scroll = document.getElementById("scroll");
+  scroll.innerHTML = "";
+  if (view === "log")     renderLog(scroll);
+  if (view === "history") renderHistory(scroll);
+  if (view === "detail")  renderDetail(scroll);
+}
+
+function renderHeader() {
+  const btns = document.getElementById("hdrBtns");
+  btns.innerHTML = "";
+  if (view === "log") {
+    const b = document.createElement("button");
+    b.className = "btn-g"; b.textContent = "History";
+    b.onclick = () => goView("history");
+    btns.appendChild(b);
+  } else {
+    const b = document.createElement("button");
+    b.className = "btn-o"; b.textContent = "+ Log";
+    b.onclick = () => goView("log");
+    btns.appendChild(b);
+  }
+}
+
+function renderLog(root) {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  card.innerHTML = `
+    <span class="olabel">Log a Session</span>
+
+    <span class="flabel">Exercise</span>
+    <div class="ex-grid" id="exGrid"></div>
+
+    <div class="row2">
+      <div>
+        <label class="flabel">Weight (kg)</label>
+        <input class="tinput" id="wInput" type="number" inputmode="decimal" placeholder="100" value="${fWeight}">
+      </div>
+      <div>
+        <label class="flabel">Date</label>
+        <input class="tinput" id="dInput" type="date" value="${fDate}">
+      </div>
+    </div>
+
+    <div class="reps-row">
+      <label class="flabel" style="margin-bottom:0">Reps / set</label>
+      <input class="tinput" id="rInput" type="number" inputmode="numeric" value="${fRepTarget}">
+    </div>
+
+    <span class="flabel">Sets</span>
+    <div class="sets-ctrl">
+      <button class="pm" id="minusBtn">−</button>
+      <span class="sets-count" id="setsCount">${fNumSets} sets</span>
+      <button class="pm" id="plusBtn">+</button>
+    </div>
+
+    <span class="flabel">Tap once = full ✓ · twice = partial</span>
+    <div class="circles" id="circlesWrap"></div>
+
+    <div class="partial-row" id="partialRow" style="display:none">
+      <label>Reps completed in partial set</label>
+      <input class="tinput" id="pInput" type="number" inputmode="numeric" placeholder="${fRepTarget}" value="${fPartialN}">
+    </div>
+
+    <button id="logbtn" class="off">Log Session</button>
+  `;
+
+  root.appendChild(card);
+
+  // exercise buttons
+  const grid = document.getElementById("exGrid");
+  EXERCISES.forEach(ex => {
+    const b = document.createElement("button");
+    b.className = "ex-btn" + (fExercise === ex ? " sel" : "");
+    b.textContent = ex;
+    b.onclick = () => { fExercise = ex; document.querySelectorAll(".ex-btn").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); updateLogBtn(); };
+    grid.appendChild(b);
+  });
+
+  // wire inputs
+  document.getElementById("wInput").oninput = e => { fWeight = e.target.value; updateLogBtn(); };
+  document.getElementById("dInput").oninput = e => { fDate = e.target.value; };
+  document.getElementById("rInput").oninput = e => { fRepTarget = e.target.value; renderCircles(); };
+  document.getElementById("pInput") && (document.getElementById("pInput").oninput = e => { fPartialN = e.target.value; });
+  document.getElementById("minusBtn").onclick = () => changeNumSets(-1);
+  document.getElementById("plusBtn").onclick  = () => changeNumSets(1);
+  document.getElementById("logbtn").onclick   = doLog;
+
+  renderCircles();
+  updateLogBtn();
+}
+
+function renderHistory(root) {
+  const loggedEx = EXERCISES.filter(ex => sessionsFor(ex).length > 0);
+
+  if (loggedEx.length === 0) {
+    root.innerHTML = `<div class="empty"><div class="empty-icon">🏋️</div><div class="empty-txt">No sessions yet.<br>Tap + Log to start.</div></div>`;
+    return;
+  }
+
+  const lbl = document.createElement("span");
+  lbl.className = "olabel"; lbl.textContent = "Your Exercises";
+  root.appendChild(lbl);
+
+  loggedEx.forEach(ex => {
+    const s = sessionsFor(ex);
+    const b = bestWeight(ex);
+    const row = document.createElement("div");
+    row.className = "ex-row";
+    row.innerHTML = `
+      <div class="ex-row-info">
+        <div class="ex-row-name">${ex}</div>
+        <div class="ex-row-meta">${s.length} session${s.length!==1?"s":""} · Last: ${fmtDate(s[0].date)}</div>
+      </div>
+      <div class="ex-row-best">${b}kg</div>
+      <div class="chev">›</div>
+    `;
+    row.onclick = () => goView("detail", ex);
+    root.appendChild(row);
+  });
+}
+
+function renderDetail(root) {
+  const s = sessionsFor(selEx);
+  const b = bestWeight(selEx);
+  const first = s[s.length-1];
+
+  const hdr = document.createElement("div");
+  hdr.className = "detail-hdr";
+  hdr.innerHTML = `<button class="backbtn">← Back</button><div class="ex-title">${selEx}</div>`;
+  hdr.querySelector(".backbtn").onclick = () => goView("history");
+  root.appendChild(hdr);
+
+  const banner = document.createElement("div");
+  banner.className = "banner";
+  banner.innerHTML = `
+    <div><div class="banner-big">${b}kg</div><div class="banner-sub">Best weight</div></div>
+    <div class="bdiv"><div class="bdiv-n">${s.length}</div><div class="banner-sub">Sessions</div></div>
+    <div class="bdiv" style="font-family:'DM Mono',monospace;font-size:11px;color:#808080;line-height:1.6">Since<br>${fmtDate(first?.date)}</div>
+  `;
+  root.appendChild(banner);
+
+  const lbl = document.createElement("span");
+  lbl.className = "olabel"; lbl.textContent = "All Sessions";
+  root.appendChild(lbl);
+
+  s.forEach(entry => {
+    const row = document.createElement("div");
+    row.className = "srow";
+
+    let circlesHTML = entry.results.map(r => {
+      const cls = r==="full" ? "full" : r==="partial" ? "partial" : "empty";
+      const txt = r==="full" ? "✓" : r==="partial" ? (entry.partialN ?? "?") : "—";
+      return `<div class="sc ${cls}">${txt}</div>`;
+    }).join("");
+
+    row.innerHTML = `
+      <button class="delbtn">✕</button>
+      <div class="srow-top">
+        <div class="srow-date">${fmtDate(entry.date)}</div>
+        <div class="srow-wt">${entry.weight}kg</div>
+      </div>
+      <div class="srow-circles">${circlesHTML}</div>
+      <div class="srow-sum">${summary(entry)}</div>
+    `;
+    row.querySelector(".delbtn").onclick = () => {
+      if (!confirm("Delete this session?")) return;
+      logs = logs.filter(e => e.id !== entry.id);
+      persist();
+      goView("detail", selEx);
+    };
+    root.appendChild(row);
+  });
+}
+
+
+// ── STOPWATCH ─────────────────────────────────────────────────────
+let swMs      = 0;      // accumulated milliseconds
+let swStart   = null;   // Date.now() when last started
+let swRunning = false;
+let swRaf     = null;
+
+function swFmt(ms) {
+  const totalTenths = Math.floor(ms / 100);
+  const tenths = totalTenths % 10;
+  const totalSec = Math.floor(ms / 1000);
+  const secs = totalSec % 60;
+  const mins = Math.floor(totalSec / 60);
+  return mins + ":" + String(secs).padStart(2,"0") + "." + tenths;
+}
+
+function swTick() {
+  if (!swRunning) return;
+  const el = document.getElementById("swTime");
+  if (el) {
+    const elapsed = swMs + (Date.now() - swStart);
+    el.textContent = swFmt(elapsed);
+  }
+  swRaf = requestAnimationFrame(swTick);
+}
+
+document.getElementById("swGo").onclick = function() {
+  if (swRunning) return;
+  swRunning = true;
+  swStart = Date.now();
+  document.getElementById("swTime").classList.add("running");
+  document.getElementById("swGo").style.display    = "none";
+  document.getElementById("swPause").style.display = "";
+  swRaf = requestAnimationFrame(swTick);
+};
+
+document.getElementById("swPause").onclick = function() {
+  if (!swRunning) return;
+  swMs += Date.now() - swStart;
+  swRunning = false;
+  cancelAnimationFrame(swRaf);
+  document.getElementById("swTime").classList.remove("running");
+  document.getElementById("swGo").style.display    = "";
+  document.getElementById("swPause").style.display = "none";
+};
+
+document.getElementById("swReset").onclick = function() {
+  swMs = 0;
+  swRunning = false;
+  swStart = null;
+  cancelAnimationFrame(swRaf);
+  document.getElementById("swTime").textContent = "0:00.0";
+  document.getElementById("swTime").classList.remove("running");
+  document.getElementById("swGo").style.display    = "";
+  document.getElementById("swPause").style.display = "none";
+};
+
+// ── BOOT ─────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
